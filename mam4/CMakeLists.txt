@@ -1,22 +1,78 @@
-include(ExternalProject)
+# We download the MAM box model and build it directly as an executable here,
+# since it doesn't have a reasonable build system.
 
-add_executable(mam4 IMPORTED GLOBAL)
-set_target_properties(mam4 PROPERTIES IMPORTED_LOCATION ${PROJECT_BINARY_DIR}/bin/mam4)
-set(MAM4_REPOSITORY https://github.com/AMBRS-Project/MAM_box_model.git)
-set(MAM4_CMAKE_OPTS -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                    -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
-                    -DLIBRARIES_DIR=${PROJECT_BINARY_DIR})
-ExternalProject_Add(mam4_proj
-                    PREFIX ${CMAKE_CURRENT_BINARY_DIR}/mam4
-                    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/mam4
-                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/mam4
-                    INSTALL_DIR ${PROJECT_BINARY_DIR}
-                    GIT_REPOSITORY ${MAM4_REPOSITORY}
-                    PATCH_COMMAND cmake -E copy CMakeLists_mam4.txt ${CMAKE_CURRENT_SOURCE_DIR}/mam4
-                    CMAKE_ARGS ${MAM4_CMAKE_OPTS}
-                    LOG_CONFIGURE TRUE
-                    BUILD_COMMAND make -j
-                    LOG_BUILD TRUE
-                    INSTALL_COMMAND make install
-                    LOG_INSTALL TRUE)
-install(TARGETS mam4 DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+set(MAM4_SOURCE_URL https://github.com/AMBRS-project/MAM_box_model/archive/refs/heads/main.zip)
+set(MAM4_SOURCE_DIR ${PROJECT_BINARY_DIR}/MAM_box_model)
+if (NOT EXISTS ${MAM_SOURCE_DIR})
+  # download and extract the source for MAM4
+  file(DOWNLOAD ${MAM4_SOURCE_URL} MAM_box_model.zip)
+  file(ARCHIVE_EXTRACT INPUT MAM_box_model.zip DESTINATION ${MAM_SOURCE_DIR})
+
+  # copy some files into place
+  #file(COPY ${MAM_SOURCE_DIR}/test_drivers/cambox_config.cpp.in
+  #          ${MAM_SOURCE_DIR}/test_drivers/cambox_config.make.in
+  #     DESTINATION ${MAM_SOURCE_DIR})
+endif()
+
+# build the box model
+add_executable(mam4
+  ${MAM_SOURCE_DIR}/e3sm_src/shr_kind_mod.F90
+  ${MAM_SOURCE_DIR}/e3sm_src/shr_const_mod.F90
+
+  ${MAM_SOURCE_DIR}/box_model_utils/cam_logfile.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/spmd_utils.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/abortutils.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/cam_abortutils.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/ppgrid.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/pmgrid.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/constituents.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/radconstants.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/physconst.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/cam_history.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/units.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/ref_pres.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/dyn_grid.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/buffer.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/physics_buffer.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/physics_types.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/phys_control.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/mo_constants.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/chem_mods.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/mo_tracname.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/mo_chem_utls.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/gffgch.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/wv_saturation.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/error_function.F90
+  ${MAM_SOURCE_DIR}/e3sm_src/shr_spfn_mod.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/infnan.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/seasalt_model.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/time_manager.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/aerodep_flx.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/modal_aero_convproc.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/modal_aero_deposition.F90
+
+  ${MAM_SOURCE_DIR}/e3sm_src/modal_aero_data.F90
+
+  ${MAM_SOURCE_DIR}/box_model_utils/rad_constituents.F90
+
+  ${MAM_SOURCE_DIR}/e3sm_src_modified/modal_aero_wateruptake.F90
+  ${MAM_SOURCE_DIR}/e3sm_src/modal_aero_rename.F90
+  ${MAM_SOURCE_DIR}/e3sm_src/modal_aero_calcsize.F90
+  ${MAM_SOURCE_DIR}/e3sm_src/modal_aero_gasaerexch.F90
+  ${MAM_SOURCE_DIR}/e3sm_src/modal_aero_newnuc.F90
+  ${MAM_SOURCE_DIR}/e3sm_src/modal_aero_coag.F90
+  ${MAM_SOURCE_DIR}/e3sm_src_modified/modal_aero_amicphys.F90
+  ${MAM_SOURCE_DIR}/e3sm_src_modified/modal_aero_initialize_data.F90
+
+  ${MAM_SOURCE_DIR}/box_model_utils/gaschem_simple.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/cloudchem_simple.F90
+  ${MAM_SOURCE_DIR}/test_drivers/driver.F90
+  ${MAM_SOURCE_DIR}/box_model_utils/main.F90
+)
+target_link_libraries(mam4 netcdff netcdf hdf5 dl)
+
+# These macros are defined in ${MAM_SOURCE_DIR}/test_drivers/cambox_config.cpp.in.
+set_target_properties(mam4 PROPERTIES COMPILE_DEFINITIONS
+  CAMBOX_ACTIVATE_THIS;CAMBOX_DEACTIVATE_THIS;MODAL_AERO;MODAL_AERO_4MODE_MOM;
+  DRAIN_EVAP_TO_COARSE_AERO;PCNST=35;PCOLS=1;PVER=1;NBC=1;NPOA=1;NSOA=1
+)
