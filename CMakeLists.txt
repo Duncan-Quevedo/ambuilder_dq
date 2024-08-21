@@ -51,10 +51,9 @@ if (CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   # This is a hack to make our non-standard inf/nan values work with
   # recent, picky versions of GFortran.
   if (${CMAKE_Fortran_COMPILER_VERSION} GREATER_EQUAL 10)
-  #  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fallow-invalid-boz")
-  #  message(STATUS "BOZ literal hack enabled")
-  #
-  #  # We also need this guy.
+    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fallow-invalid-boz")
+    message(STATUS "BOZ literal hack enabled")
+    # we also need this guy
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fallow-argument-mismatch")
   endif()
 elseif (CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")

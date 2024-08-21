@@ -84,10 +84,12 @@ set(NETCDF_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                       -DCMAKE_BUILD_TYPE=Release
                       -DBUILD_SHARED_LIBS=OFF
                       -DBUILD_UTILITIES=OFF
+                      -DENABLE_BYTERANGE=OFF
                       -DENABLE_CDF5=OFF
                       -DENABLE_DAP=OFF
                       -DENABLE_EXAMPLES=OFF
                       -DENABLE_HDF5=ON
+                      -DENABLE_LIBXML=OFF
                       -DENABLE_MMAP=OFF
                       -DENABLE_NCZARR=OFF
                       -DENABLE_NETCDF4=ON
@@ -220,4 +222,5 @@ if (MOSAIC_SOURCE_DIR)
     ${MOSAIC_SOURCE_DIR}/solver/dlsode.f90
   )
   set_target_properties(mosaic PROPERTIES INCLUDE_DIRECTORIES ${MOSAIC_SOURCE_DIR}/datamodules)
+  # FIXME: need to install mosaic in a proper location with include/lib subfolders
 endif()

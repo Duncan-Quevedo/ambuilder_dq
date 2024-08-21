@@ -64,10 +64,9 @@ add_executable(mam4
   ${MAM4_SOURCE_DIR}/test_drivers/driver.F90
   ${MAM4_SOURCE_DIR}/box_model_utils/main.F90
 )
-target_link_libraries(mam4 netcdff netcdf hdf5 dl)
+target_link_libraries(mam4 netcdff netcdf hdf5_hl hdf5 dl z)
 
 # These macros are defined in ${MAM4_SOURCE_DIR}/test_drivers/cambox_config.cpp.in.
-set_target_properties(mam4 PROPERTIES COMPILE_DEFINITIONS
-  CAMBOX_ACTIVATE_THIS;CAMBOX_DEACTIVATE_THIS;MODAL_AERO;MODAL_AERO_4MODE_MOM;
-  DRAIN_EVAP_TO_COARSE_AERO;PCNST=35;PCOLS=1;PVER=1;NBC=1;NPOA=1;NSOA=1
-)
+target_compile_definitions(mam4 PRIVATE CAMBOX_ACTIVATE_THIS;CAMBOX_DEACTIVATE_THIS;MODAL_AERO;MODAL_AERO_4MODE_MOM;DRAIN_EVAP_TO_COARSE_AERO;PCNST=35;PCOLS=1;PVER=1;NBC=1;NPOA=1;NSOA=1)
+
+install(TARGETS mam4 DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
