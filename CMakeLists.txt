@@ -1,4 +1,4 @@
-cmake_minimum_required (VERSION 3.15.0)
+cmake_minimum_required (VERSION 3.24.0)
 
 # Adjust CMake's module path.
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
@@ -8,10 +8,9 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 #----------
 set(MOSAIC_SOURCE_DIR "" CACHE STRING "source directory for Mosaic")
 
+project(ambuilder)
 enable_language(C)
 enable_language(Fortran)
-
-project(ambuilder)
 
 message(STATUS "Generating project files in build directory: ${PROJECT_BINARY_DIR}")
 message(STATUS "C compiler is ${CMAKE_C_COMPILER} (${CMAKE_C_COMPILER_ID} ${CMAKE_C_COMPILER_VERSION})")
@@ -51,13 +50,13 @@ if (CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
   #set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -Wno-line-truncation") # <-- we shouldn't need this!
   # This is a hack to make our non-standard inf/nan values work with
   # recent, picky versions of GFortran.
-  #if (${CMAKE_Fortran_COMPILER_VERSION} GREATER_EQUAL 10)
+  if (${CMAKE_Fortran_COMPILER_VERSION} GREATER_EQUAL 10)
   #  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fallow-invalid-boz")
   #  message(STATUS "BOZ literal hack enabled")
   #
   #  # We also need this guy.
-  #  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fallow-argument-mismatch")
-  #endif()
+    set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -fallow-argument-mismatch")
+  endif()
 elseif (CMAKE_Fortran_COMPILER_ID STREQUAL "Intel")
   if (CMAKE_BUILD_TYPE STREQUAL "Debug")
     set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -traceback")
