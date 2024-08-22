@@ -1,7 +1,7 @@
 # CARMA "box model"
 
 We build the [CARMA base model](https://github.com/AMBRS-project/CARMA_base) as
-a library and then create an executable using source files adapted from the
+a library and then create an executable using source files copied from the
 [CARMA standalone repository](https://github.com/ESCOMP/CARMA):
 
 * [`atmosphere_mod.F90`](https://github.com/ESCOMP/CARMA/blob/main/tests/atmosphere_mod.F90)
