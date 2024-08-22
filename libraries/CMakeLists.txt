@@ -48,6 +48,7 @@ set(HDF5_MD5 bc987d22e787290127aacd7b99b4f31e)
 set(HDF5_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                     -DCMAKE_BUILD_TYPE=Release
                     -DBUILD_SHARED_LIBS=OFF
+                    -DHDF5_ENABLE_PARALLEL=OFF
                     -DHDF5_BUILD_CPP_LIB=OFF
                     -DHDF5_BUILD_EXAMPLES=OFF
                     -DHDF5_BUILD_FORTRAN=OFF
@@ -93,8 +94,12 @@ set(NETCDF_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                       -DENABLE_MMAP=OFF
                       -DENABLE_NCZARR=OFF
                       -DENABLE_NETCDF4=ON
+                      -DENABLE_PARALLEL4=OFF
+                      -DENABLE_PARALLEL_TESTS=OFF
+                      -DENABLE_PLUGINS=OFF
                       -DENABLE_PNETCDF=OFF
-                      -DHDF5_LIBRARY=${HDF5_LIBRARY}
+                      -DENABLE_TESTS=OFF
+                      -DHDF5_C_LIBRARY=${HDF5_LIBRARY}
                       -DHDF5_HL_LIBRARY=${HDF5_HL_LIBRARY}
                       -DHDF5_INCLUDE_DIR=${PROJECT_BINARY_DIR}/include
 )
