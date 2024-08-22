@@ -32,4 +32,4 @@ ExternalProject_Add(partmc_proj
                     LOG_BUILD TRUE
                     LOG_OUTPUT_ON_FAILURE TRUE)
 add_dependencies(partmc partmc_proj)
-install(FILES ${PROJECT_BINARY_DIR}/bin/partmc DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+install(PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/partmc-bld/partmc DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
