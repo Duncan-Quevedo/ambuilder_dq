@@ -5,8 +5,8 @@
 set(MAM4_SOURCE_URL https://github.com/AMBRS-project/MAM_box_model/archive/refs/heads/main.zip)
 set(MAM4_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/MAM_box_model-main)
 if (NOT EXISTS ${MAM4_SOURCE_DIR})
-  file(DOWNLOAD ${MAM4_SOURCE_URL} ${CMAKE_CURRENT_BINARY_DIR}/MAM_box_model.zip)
-  file(ARCHIVE_EXTRACT INPUT ${CMAKE_CURRENT_BINARY_DIR}/MAM_box_model.zip)
+  file(DOWNLOAD ${MAM4_SOURCE_URL} ${CMAKE_CURRENT_BINARY_DIR}/MAM_box_model-main.zip)
+  file(ARCHIVE_EXTRACT INPUT ${CMAKE_CURRENT_BINARY_DIR}/MAM_box_model-main.zip)
 endif()
 
 # build the box model

@@ -21,9 +21,9 @@ set(ZLIB_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
 )
 ExternalProject_Add(zlib_proj
                     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/zlib
-                    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/zlib
-                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/zlib
+                    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+                    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/zlib-src
+                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/zlib-bld
                     INSTALL_DIR ${PROJECT_BINARY_DIR}
                     URL ${ZLIB_DOWNLOAD_URL}
                     URL_MD5 ${ZLIB_MD5}
@@ -57,9 +57,9 @@ set(HDF5_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
 )
 ExternalProject_Add(hdf5_proj
                     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/hdf5
-                    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/hdf5
-                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/hdf5
+                    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+                    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/hdf5-src
+                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/hdf5-bld
                     INSTALL_DIR ${PROJECT_BINARY_DIR}
                     URL ${HDF5_DOWNLOAD_URL}
                     URL_MD5 ${HDF5_MD5}
@@ -100,9 +100,9 @@ set(NETCDF_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
 )
 ExternalProject_Add(netcdf_proj
                     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/netcdf-c
-                    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/netcdf-c
-                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-c
+                    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+                    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-c-src
+                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-c-bld
                     INSTALL_DIR ${PROJECT_BINARY_DIR}
                     URL ${NETCDF_DOWNLOAD_URL}
                     URL_MD5 ${NETCDF_MD5}
@@ -139,16 +139,16 @@ set(NETCDFF_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
 #set(ENV{LDFLAGS} "-L${PROJECT_BINARY_DIR}/lib -lnetcdf")
 ExternalProject_Add(netcdff_proj
                     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/netcdf-fortran
-                    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}
-                    SOURCE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/netcdf-fortran
-                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-fortran
+                    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+                    SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-fortran-src
+                    BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-fortran-bld
                     INSTALL_DIR ${PROJECT_BINARY_DIR}
                     URL ${NETCDFF_DOWNLOAD_URL}
                     URL_MD5 ${NETCDFF_MD5}
                     DEPENDS netcdf
                     # we need to replace the CMakeLists.txt file here because the default one is broken
                     # (see https://github.com/Unidata/netcdf-fortran/issues/278 for details)
-                    PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/netcdf-fortran-CMakeLists.txt ${CMAKE_CURRENT_SOURCE_DIR}/netcdf-fortran/CMakeLists.txt
+                    PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/netcdf-fortran-CMakeLists.txt ${CMAKE_CURRENT_BINARY_DIR}/netcdf-fortran-src/CMakeLists.txt
                     CMAKE_ARGS ${NETCDFF_CMAKE_ARGS}
                     LOG_CONFIGURE TRUE
                     BUILD_COMMAND make -j
@@ -220,7 +220,25 @@ if (MOSAIC_SOURCE_DIR)
     ${MOSAIC_SOURCE_DIR}/gas/solarzenithangle.f90
 
     ${MOSAIC_SOURCE_DIR}/solver/dlsode.f90
+
+    ${MOSAIC_SOURCE_DIR}/main/function_watervapor.f90
+    ${MOSAIC_SOURCE_DIR}/main/init_data_modules.f90
+    ${MOSAIC_SOURCE_DIR}/main/integratechemistry.f90
+    ${MOSAIC_SOURCE_DIR}/main/allocatememory.f90
+    ${MOSAIC_SOURCE_DIR}/main/deallocatememory.f90
   )
   set_target_properties(mosaic PROPERTIES INCLUDE_DIRECTORIES ${MOSAIC_SOURCE_DIR}/datamodules)
-  # FIXME: need to install mosaic in a proper location with include/lib subfolders
+
+  # This custom command installs mosaic in a folder in the way PartMC expects it.
+  add_custom_command(TARGET mosaic POST_BUILD
+                     COMMAND cmake -E copy module_data_mosaic_aero.mod ${PROJECT_BINARY_DIR}/include
+                     COMMAND cmake -E copy module_data_mosaic_cloud.mod ${PROJECT_BINARY_DIR}/include
+                     COMMAND cmake -E copy module_data_mosaic_gas.mod ${PROJECT_BINARY_DIR}/include
+                     COMMAND cmake -E copy module_data_mosaic_kind.mod ${PROJECT_BINARY_DIR}/include
+                     COMMAND cmake -E copy module_data_mosaic_main.mod ${PROJECT_BINARY_DIR}/include
+                     COMMAND cmake -E copy libmosaic.a ${PROJECT_BINARY_DIR}/lib
+                     MAIN_DEPENDENCY libmosaic.a
+                     DEPENDS mosaic
+                     COMMENT "Copying Mosaic files into place..."
+  )
 endif()
