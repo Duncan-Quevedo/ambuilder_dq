@@ -21,7 +21,6 @@ ExternalProject_Add(partmc_proj
                     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/partmc-src
                     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/partmc-bld
                     GIT_REPOSITORY ${PARTMC_REPOSITORY}
-                    GIT_TAG jeff-cohere/single-pass-linker-fix
                     DEPENDS ${PARTMC_DEPS}
                     # PartMC assumes shared libraries for NetCDF, so we replace its config here
                     PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/netcdf.cmake ${CMAKE_CURRENT_BINARY_DIR}/partmc-src
