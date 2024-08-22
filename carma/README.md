@@ -1,6 +1,6 @@
 # CARMA "box model"
 
-We build a CARMA "box model" from [CARMA's base source](https://github.com/AMBRS-project/CARMA_base) as, creating an executable with a few source files copied from the
+We build a CARMA "box model" from [CARMA's base source](https://github.com/AMBRS-project/CARMA_base), creating an executable with a few source files copied from the
 [CARMA standalone repository](https://github.com/ESCOMP/CARMA):
 
 * [`atmosphere_mod.F90`](https://github.com/ESCOMP/CARMA/blob/main/tests/atmosphere_mod.F90)
