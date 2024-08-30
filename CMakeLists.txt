@@ -6,7 +6,6 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 #----------
 # Settings
 #----------
-set(MOSAIC_SOURCE_DIR "" CACHE STRING "source directory for Mosaic")
 
 project(ambuilder)
 enable_language(C)

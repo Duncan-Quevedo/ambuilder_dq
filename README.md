@@ -21,7 +21,7 @@ make install
 
 ### Configuration options
 
-These options can be passed to CMake using the `-D` flag
+Additional options can be passed to CMake using the `-D` flag:
 
-* `MOSAIC_SOURCE_DIR=</path/to/mosaic/source>`: enables MOSAIC in relevant
-  box models, building it from the source in the given directory.
+* `CMAKE_BUILD_TYPE={Debug,Release}`: builds debuggable or optimized versions
+  of libraries and aerosol models (respectively)

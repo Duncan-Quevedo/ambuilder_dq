@@ -1,12 +1,7 @@
 include(ExternalProject)
 
-set(PARTMC_DEPS netcdff)
-if (MOSAIC_SOURCE_DIR)
-  set(ENABLE_MOSAIC ON)
-  list(APPEND PARTMC_DEPS mosaic)
-else()
-  set(ENABLE_MOSAIC OFF)
-endif()
+set(PARTMC_DEPS camp;netcdff)
+set(ENABLE_MOSAIC OFF)
 
 # NOTE: PartMC has no install targets, so we have to do it ourselves
 add_executable(partmc IMPORTED GLOBAL)
@@ -28,7 +23,7 @@ ExternalProject_Add(partmc_proj
                     # PartMC assumes shared libraries for NetCDF, so we replace its config here
                     PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/netcdf.cmake ${CMAKE_CURRENT_BINARY_DIR}/partmc-src
                     # we have to pass NETCDF_HOME (and maybe MOSAIC_HOME) to cmake via cmake -E env below
-                    CONFIGURE_COMMAND cmake -E env NETCDF_HOME=${PROJECT_BINARY_DIR} MOSAIC_HOME=${PROJECT_BINARY_DIR} cmake -S ${CMAKE_CURRENT_BINARY_DIR}/partmc-src -B ${CMAKE_CURRENT_BINARY_DIR}/partmc-bld ${PARTMC_CMAKE_ARGS}
+                    CONFIGURE_COMMAND cmake -E env NETCDF_HOME=${PROJECT_BINARY_DIR} cmake -S ${CMAKE_CURRENT_BINARY_DIR}/partmc-src -B ${CMAKE_CURRENT_BINARY_DIR}/partmc-bld ${PARTMC_CMAKE_ARGS}
                     LOG_CONFIGURE TRUE
                     BUILD_COMMAND make # (parallel builds have module dependency issues!)
                     INSTALL_COMMAND cmake -E copy ${CMAKE_CURRENT_BINARY_DIR}/partmc-bld/partmc ${PROJECT_BINARY_DIR}/bin
