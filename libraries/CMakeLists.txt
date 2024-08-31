@@ -243,8 +243,10 @@ ExternalProject_Add_Step(suitesparse_proj install_klu_h
 )
 
 # CAMP for gas-phase chemistry
-set(CAMP_DOWNLOAD_URL https://github.com/AMBRS-Project/camp/archive/refs/heads/main.zip)
-set(CAMP_MD5 dbc37539a6f917d7d1cbfa0a3a926b49)
+# FIXME: we're temporarily using a feature branch that fixes some issues in CAMP
+#set(CAMP_DOWNLOAD_URL https://github.com/AMBRS-Project/camp/archive/refs/heads/main.zip)
+set(CAMP_DOWNLOAD_URL https://github.com/AMBRS-project/camp/archive/refs/heads/std-c-fixes.zip)
+set(CAMP_MD5 279ba6a368ba27b3ed0aee8fdb5443e8)
 set(CAMP_CMAKE_ARGS
   -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
   -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
@@ -291,88 +293,9 @@ ExternalProject_Add_Step(camp build-cvode
   DEPENDEES patch     # CAMP must be downloaded before this step
   DEPENDERS configure # CAMP must be configured after this step
 )
-
-# Mosaic (if available)
-if (MOSAIC_SOURCE_DIR)
-  add_library(mosaic STATIC
-    ${MOSAIC_SOURCE_DIR}/datamodules/module_data_mosaic_main.f90
-    ${MOSAIC_SOURCE_DIR}/datamodules/module_data_mosaic_aero.f90
-    ${MOSAIC_SOURCE_DIR}/datamodules/module_data_mosaic_gas.f90
-    ${MOSAIC_SOURCE_DIR}/datamodules/module_data_mosaic_cloud.f90
-    ${MOSAIC_SOURCE_DIR}/datamodules/module_data_mosaic_kind.f90
-
-    ${MOSAIC_SOURCE_DIR}/aerosol/aerchemistry.f90
-    ${MOSAIC_SOURCE_DIR}/aerosol/aeroptical.f90
-    ${MOSAIC_SOURCE_DIR}/aerosol/miedriver.f90
-    ${MOSAIC_SOURCE_DIR}/aerosol/ASTEM.f90
-    ${MOSAIC_SOURCE_DIR}/aerosol/cputime.f90
-    ${MOSAIC_SOURCE_DIR}/aerosol/mosaic_box.21.f90
-
-    ${MOSAIC_SOURCE_DIR}/cloud/cldchemistry.f90
-
-    ${MOSAIC_SOURCE_DIR}/gas/function_arr.f90
-    ${MOSAIC_SOURCE_DIR}/gas/function_troe.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gaschemistry.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasintegrator.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrateconstants_bio.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrateconstants_com.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrateconstants.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrateconstants_het.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrateconstants_mar.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrateconstants_urb.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrates_bio.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrates_com.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrates.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrates_het.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrates_mar.f90
-    ${MOSAIC_SOURCE_DIR}/gas/gasrates_urb.f90
-    ${MOSAIC_SOURCE_DIR}/gas/jac.f90
-    ${MOSAIC_SOURCE_DIR}/gas/loadperoxyparameters.f90
-    ${MOSAIC_SOURCE_DIR}/gas/mapgas_bio.f90
-    ${MOSAIC_SOURCE_DIR}/gas/mapgas_com.f90
-    ${MOSAIC_SOURCE_DIR}/gas/mapgas_mar.f90
-    ${MOSAIC_SOURCE_DIR}/gas/mapgasspecies.f90
-    ${MOSAIC_SOURCE_DIR}/gas/mapgas_urb.f90
-    ${MOSAIC_SOURCE_DIR}/gas/ode_bio.f90
-    ${MOSAIC_SOURCE_DIR}/gas/ode_com.f90
-    ${MOSAIC_SOURCE_DIR}/gas/ode_gas.f90
-    ${MOSAIC_SOURCE_DIR}/gas/ode_het.f90
-    ${MOSAIC_SOURCE_DIR}/gas/ode_mar.f90
-    ${MOSAIC_SOURCE_DIR}/gas/ode_urb.f90
-    ${MOSAIC_SOURCE_DIR}/gas/peroxyrateconstants.f90
-    ${MOSAIC_SOURCE_DIR}/gas/photoconstants_fixed.f90
-    ${MOSAIC_SOURCE_DIR}/gas/photoconstants_solar.f90
-    ${MOSAIC_SOURCE_DIR}/gas/photoparam1.f90
-    ${MOSAIC_SOURCE_DIR}/gas/photoparam2.f90
-    ${MOSAIC_SOURCE_DIR}/gas/selectgasregime.f90
-    ${MOSAIC_SOURCE_DIR}/gas/setgas_bio.f90
-    ${MOSAIC_SOURCE_DIR}/gas/setgas_com.f90
-    ${MOSAIC_SOURCE_DIR}/gas/setgasindices.f90
-    ${MOSAIC_SOURCE_DIR}/gas/setgas_mar.f90
-    ${MOSAIC_SOURCE_DIR}/gas/setgas_urb.f90
-    ${MOSAIC_SOURCE_DIR}/gas/solarzenithangle.f90
-
-    ${MOSAIC_SOURCE_DIR}/solver/dlsode.f90
-
-    ${MOSAIC_SOURCE_DIR}/main/function_watervapor.f90
-    ${MOSAIC_SOURCE_DIR}/main/init_data_modules.f90
-    ${MOSAIC_SOURCE_DIR}/main/integratechemistry.f90
-    ${MOSAIC_SOURCE_DIR}/main/allocatememory.f90
-    ${MOSAIC_SOURCE_DIR}/main/deallocatememory.f90
-  )
-  set_target_properties(mosaic PROPERTIES INCLUDE_DIRECTORIES ${MOSAIC_SOURCE_DIR}/datamodules)
-
-  # This custom command installs mosaic in a folder in the way PartMC expects it.
-  add_custom_command(
-    TARGET mosaic POST_BUILD
-    COMMAND cmake -E copy module_data_mosaic_aero.mod ${CMAKE_BINARY_DIR}/include
-    COMMAND cmake -E copy module_data_mosaic_cloud.mod ${CMAKE_BINARY_DIR}/include
-    COMMAND cmake -E copy module_data_mosaic_gas.mod ${CMAKE_BINARY_DIR}/include
-    COMMAND cmake -E copy module_data_mosaic_kind.mod ${CMAKE_BINARY_DIR}/include
-    COMMAND cmake -E copy module_data_mosaic_main.mod ${CMAKE_BINARY_DIR}/include
-    COMMAND cmake -E copy libmosaic.a ${CMAKE_BINARY_DIR}/lib
-    MAIN_DEPENDENCY libmosaic.a
-    DEPENDS mosaic
-    COMMENT "Copying Mosaic files into place..."
-  )
-endif()
+ExternalProject_Add_Step(camp relocate-camp-headers
+  COMMENT "Copying CAMP headers to where PartMC can find them..."
+  COMMAND cmake -E copy_directory ${CMAKE_BINARY_DIR}/include/camp ${CMAKE_BINARY_DIR}/include
+  LOG TRUE
+  DEPENDEES install # CAMP must be installed before this step
+)
