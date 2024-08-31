@@ -199,9 +199,10 @@ set(SUITESPARSE_DOWNLOAD_URL https://github.com/DrTimothyAldenDavis/SuiteSparse/
 set(SUITESPARSE_MD5 b02bbfa2c701bce10928bfa8b7683d75)
 set(SUITESPARSE_CMAKE_ARGS -DCMAKE_INSTALL_PREFIX=${PROJECT_BINARY_DIR}
                            -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
-                           -DSUITESPARSE_ENABLE_PROJECTS=amd;btf;colamd;klu
                            -DBUILD_SHARED_LIBS=ON
 )
+# need to use CMAKE_CACHE_ARGS for lists
+set(SUITESPARSE_CMAKE_CACHE_ARGS -DSUITESPARSE_ENABLE_PROJECTS:STRING=amd;btf;colamd;klu)
 ExternalProject_Add(suitesparse_proj
                     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/SuiteSparse
                     DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
@@ -211,12 +212,18 @@ ExternalProject_Add(suitesparse_proj
                     URL_MD5 ${SUITESPARSE_MD5}
                     UPDATE_COMMAND ""
                     CMAKE_ARGS ${SUITESPARSE_CMAKE_ARGS}
+                    CMAKE_CACHE_ARGS ${SUITESPARSE_CMAKE_CACHE_ARGS}
                     LOG_CONFIGURE TRUE
                     BUILD_COMMAND make -j
                     LOG_BUILD TRUE
                     INSTALL_COMMAND make install
                     LOG_INSTALL TRUE
                     LOG_OUTPUT_ON_FAILURE TRUE)
+# copy klu.h into ${PROJECT_BINARY_DIR}/include, where PartMC expects it
+ExternalProject_Add_Step(suitesparse_proj install_klu_h
+                         COMMENT "Copying klu.h into ${PROJECT_BINARY_DIR}/include for PartMC..."
+                         COMMAND cmake -E copy ${PROJECT_BINARY_DIR}/include/suitesparse/klu.h ${PROJECT_BINARY_DIR}/include)
+
 
 # CVODE for solving ordinary differential equations (for CAMP)
 set(CVODE_DOWNLOAD_URL https://github.com/LLNL/sundials/releases/download/v7.1.1/cvode-7.1.1.tar.gz)
@@ -259,7 +266,7 @@ ExternalProject_Add(camp
                     DEPENDS json_fortran_proj
                     UPDATE_COMMAND ""
                     # we have to pass JSON_FORTRAN_HOME to cmake via cmake -E env below
-                    CONFIGURE_COMMAND cmake -E env JSON_FORTRAN_HOME=${PROJECT_BINARY_DIR} cmake -S ${CMAKE_CURRENT_BINARY_DIR}/camp-src -B ${CMAKE_CURRENT_BINARY_DIR}/camp-bld ${CAMP_CMAKE_ARGS}
+                    CONFIGURE_COMMAND cmake -E env JSON_FORTRAN_HOME=${PROJECT_BINARY_DIR} SUNDIALS_HOME=${PROJECT_BINARY_DIR} cmake -S ${CMAKE_CURRENT_BINARY_DIR}/camp-src -B ${CMAKE_CURRENT_BINARY_DIR}/camp-bld ${CAMP_CMAKE_ARGS}
                     LOG_CONFIGURE TRUE
                     BUILD_COMMAND make
                     LOG_BUILD TRUE
