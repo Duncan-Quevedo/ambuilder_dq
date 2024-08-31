@@ -103,7 +103,7 @@ add_executable(carma
   carma.F90
 )
 
-# These macros are defined in ${MAM4_SOURCE_DIR}/test_drivers/cambox_config.cpp.in.
-#target_compile_definitions(carma PRIVATE CAMBOX_ACTIVATE_THIS;CAMBOX_DEACTIVATE_THIS;MODAL_AERO;MODAL_AERO_4MODE_MOM;DRAIN_EVAP_TO_COARSE_AERO;PCNST=35;PCOLS=1;PVER=1;NBC=1;NPOA=1;NSOA=1)
-
-install(TARGETS carma DESTINATION ${CMAKE_INSTALL_PREFIX}/bin)
+install(
+  TARGETS carma
+  DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
+)
