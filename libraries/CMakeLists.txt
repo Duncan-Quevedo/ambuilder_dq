@@ -243,10 +243,8 @@ ExternalProject_Add_Step(suitesparse_proj install_klu_h
 )
 
 # CAMP for gas-phase chemistry
-# FIXME: we're temporarily using a feature branch that fixes some issues in CAMP
-#set(CAMP_DOWNLOAD_URL https://github.com/AMBRS-Project/camp/archive/refs/heads/main.zip)
-set(CAMP_DOWNLOAD_URL https://github.com/AMBRS-project/camp/archive/refs/heads/std-c-fixes.zip)
-set(CAMP_MD5 279ba6a368ba27b3ed0aee8fdb5443e8)
+set(CAMP_DOWNLOAD_URL https://github.com/AMBRS-Project/camp/archive/refs/heads/main.zip)
+set(CAMP_MD5 5fd6c6a4d1d11edf42705cf8c980f5cf)
 set(CAMP_CMAKE_ARGS
   -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
   -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
