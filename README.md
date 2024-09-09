@@ -24,4 +24,14 @@ make install
 Additional options can be passed to CMake using the `-D` flag:
 
 * `CMAKE_BUILD_TYPE={Debug,Release}`: builds debuggable or optimized versions
-  of libraries and aerosol models (respectively)
+  of libraries and aerosol box models (default: `Release`)
+* `CMAKE_C_COMPILER=/path/to/c-compiler`: sets the C compiler used to build
+  libraries and/or aerosol box models
+* `CMAKE_Fortran_COMPILER=/path/to/fortran-compiler`: sets the Fortran compiler
+  used to build libraries and/or aerosol box models
+* `CMAKE_INSTALL_PREFIX=/path/to/install`: sets the top-level directory under
+  which supported aerosol box models are installed (in a `bin` subdirectory)
+* `ENABLE_CAMP={ON,OFF}`: enables support for CAMP chemistry in relevant aerosol
+  box modules (default: `OFF`)
+* `MOSAIC_SOURCE_DIR=/path/to/mosaic`: enables MOSAIC in relevant aerosol box
+  models, building it from the source in the given directory (default: none)

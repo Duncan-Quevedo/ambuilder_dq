@@ -7,6 +7,15 @@ set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/")
 # Settings
 #----------
 
+option(ENABLE_CAMP "Enables support for CAMP chemistry in relevant aerosol models" OFF)
+
+set(MOSAIC_SOURCE_DIR "" CACHE PATH "source directory for Mosaic")
+if (MOSAIC_SOURCE_DIR)
+  set(ENABLE_MOSAIC ON CACHE BOOL "MOSAIC support (determined by MOSAIC_SOURCE_DIR)")
+else()
+  set(ENABLE_MOSAIC OFF CACHE BOOL "MOSAIC support (determined by MOSAIC_SOURCE_DIR)")
+endif()
+
 project(ambuilder)
 enable_language(C)
 enable_language(Fortran)
