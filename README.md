@@ -32,6 +32,6 @@ Additional options can be passed to CMake using the `-D` flag:
 * `CMAKE_INSTALL_PREFIX=/path/to/install`: sets the top-level directory under
   which supported aerosol box models are installed (in a `bin` subdirectory)
 * `ENABLE_CAMP={ON,OFF}`: enables support for CAMP chemistry in relevant aerosol
-  box modules (default: `OFF`)
+  box models (default: `OFF`)
 * `MOSAIC_SOURCE_DIR=/path/to/mosaic`: enables MOSAIC in relevant aerosol box
   models, building it from the source in the given directory (default: none)
