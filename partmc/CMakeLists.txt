@@ -1,7 +1,6 @@
 include(ExternalProject)
 
 set(PARTMC_DEPS netcdff)
-set(PARTMC_ENV_VARS NETCDF_HOME=${CMAKE_BINARY_DIR})
 if (ENABLE_CAMP)
   list(PREPEND PARTMC_DEPS camp)
   set(PARTMC_ENV_VARS ${PARTMC_ENV_VARS} CAMP_HOME=${CMAKE_BINARY_DIR})
@@ -10,9 +9,12 @@ elseif (ENABLE_MOSAIC)
   set(PARTMC_ENV_VARS ${PARTMC_ENV_VARS} MOSAIC_HOME=${CMAKE_BINARY_DIR})
 endif()
 
-# fish out the locations of HDF5 libraries
+# fish file locations from our libraries
+get_target_property(Z_LIB z IMPORTED_LOCATION)
 get_target_property(HDF5_LIB hdf5 IMPORTED_LOCATION)
 get_target_property(HDF5_HL_LIB hdf5_hl IMPORTED_LOCATION)
+get_target_property(NETCDF_C_LIB netcdf IMPORTED_LOCATION)
+get_target_property(NETCDF_FORTRAN_LIB netcdff IMPORTED_LOCATION)
 
 # NOTE: PartMC has no install targets, so we have to do it ourselves
 add_executable(partmc IMPORTED GLOBAL)
@@ -25,8 +27,12 @@ set(PARTMC_CMAKE_ARGS
   -DCMAKE_Fortran_COMPILER=${CMAKE_Fortran_COMPILER}
   -DENABLE_CAMP=${ENABLE_CAMP}
   -DENABLE_MOSAIC=${ENABLE_MOSAIC}
-  -DHDF5_LIB=${HDF5_LIB}
-  -DHDF5_HL_LIB=${HDF5_HL_LIB}
+  -DZ_LIB:FILEPATH=${Z_LIB}
+  -DHDF5_LIB:FILEPATH=${HDF5_LIB}
+  -DHDF5_HL_LIB:FILEPATH=${HDF5_HL_LIB}
+  -DNETCDF_INCLUDE_DIR:PATH=${CMAKE_BINARY_DIR}/include
+  -DNETCDF_C_LIB:FILEPATH=${NETCDF_C_LIB}
+  -DNETCDF_FORTRAN_LIB:FILEPATH=${NETCDF_FORTRAN_LIB}
 )
 ExternalProject_Add(partmc_proj
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/partmc
@@ -39,7 +45,7 @@ ExternalProject_Add(partmc_proj
   UPDATE_COMMAND ""
   # PartMC assumes shared libraries for NetCDF, so we replace its config here
   PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/netcdf.cmake ${CMAKE_CURRENT_BINARY_DIR}/partmc-src
-  # we have to pass NETCDF_HOME and CAMP_HOME to cmake via cmake -E env below
+  # we pass some environment variables via cmake -E env below
   CONFIGURE_COMMAND cmake -E env ${PARTMC_ENV_VARS} cmake -S ${CMAKE_CURRENT_BINARY_DIR}/partmc-src -B ${CMAKE_CURRENT_BINARY_DIR}/partmc-bld ${PARTMC_CMAKE_ARGS}
   LOG_CONFIGURE TRUE
   BUILD_COMMAND make # (parallel builds have module dependency issues!)
@@ -47,6 +53,14 @@ ExternalProject_Add(partmc_proj
   LOG_BUILD TRUE
   LOG_OUTPUT_ON_FAILURE TRUE
 )
+ExternalProject_Add_Step(partmc_proj patch-netcdf-cmake
+    COMMENT "Patching netcdf.cmake file with proper library locations..."
+    COMMAND cmake -E copy netcdf.cmake ${CMAKE_CURRENT_BINARY_DIR}/partmc-src
+    LOG TRUE
+    WORKING_DIRECTORY ${CMAKE_CURRENT_SOURCE_DIR}
+    DEPENDEES patch
+    DEPENDERS configure
+  )
 add_dependencies(partmc partmc_proj)
 install(
   PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/partmc-bld/partmc
