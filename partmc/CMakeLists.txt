@@ -20,7 +20,7 @@ get_target_property(NETCDF_FORTRAN_LIB netcdff IMPORTED_LOCATION)
 add_executable(partmc IMPORTED GLOBAL)
 set_target_properties(partmc PROPERTIES IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/bin/partmc)
 set(PARTMC_DOWNLOAD_URL https://github.com/AMBRS-Project/partmc/archive/refs/heads/master.zip)
-set(PARTMC_MD5 88c1023d440a3ee113fd7908f193a9a4)
+set(PARTMC_MD5 1a2a39df750b78d6c83a781429505c38)
 set(PARTMC_CMAKE_ARGS
   -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
   -DCMAKE_C_COMPILER=${CMAKE_C_COMPILER}
