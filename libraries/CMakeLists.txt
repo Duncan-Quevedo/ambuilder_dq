@@ -23,6 +23,7 @@ set(ZLIB_CMAKE_ARGS
 ExternalProject_Add(zlib_proj
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/zlib
   DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+  DOWNLOAD_NAME zlib.zip
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/zlib-src
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/zlib-bld
   INSTALL_DIR ${CMAKE_BINARY_DIR}
@@ -68,6 +69,7 @@ set(HDF5_CMAKE_ARGS
 ExternalProject_Add(hdf5_proj
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/hdf5
   DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+  DOWNLOAD_NAME hdf5.zip
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/hdf5-src
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/hdf5-bld
   INSTALL_DIR ${CMAKE_BINARY_DIR}
@@ -117,6 +119,7 @@ set(NETCDF_CMAKE_ARGS
 ExternalProject_Add(netcdf_proj
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/netcdf-c
   DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+  DOWNLOAD_NAME netcdf-c.zip
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-c-src
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-c-bld
   INSTALL_DIR ${CMAKE_BINARY_DIR}
@@ -157,6 +160,7 @@ set(NETCDFF_CMAKE_ARGS
 ExternalProject_Add(netcdff_proj
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/netcdf-fortran
   DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+  DOWNLOAD_NAME netcdf-fortran.zip
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-fortran-src
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-fortran-bld
   INSTALL_DIR ${CMAKE_BINARY_DIR}
@@ -197,6 +201,7 @@ if (ENABLE_CAMP)
   ExternalProject_Add(json_fortran_proj
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/json-fortran
     DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+    DOWNLOAD_NAME json-fortran.zip
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/json-fortran-src
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/json-fortran-bld
     URL ${JSON_FORTRAN_DOWNLOAD_URL}
@@ -230,6 +235,7 @@ if (ENABLE_CAMP)
   ExternalProject_Add(suitesparse_proj
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/SuiteSparse
     DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+    DOWNLOAD_NAME SuiteSparse.zip
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/SuiteSparse-src
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/SuiteSparse-bld
     URL ${SUITESPARSE_DOWNLOAD_URL}
@@ -254,8 +260,9 @@ if (ENABLE_CAMP)
   )
 
   # CAMP itself
-  set(CAMP_DOWNLOAD_URL https://github.com/AMBRS-Project/camp/archive/refs/heads/main.zip)
-  set(CAMP_MD5 5fd6c6a4d1d11edf42705cf8c980f5cf)
+  # NOTE: vvv we must use a specific version of CAMP with PartMC vvv 
+  set(CAMP_DOWNLOAD_URL https://github.com/open-atmos/camp/archive/refs/tags/v1.0.0-gamma.tar.gz)
+  set(CAMP_MD5 a7cae833a50027182d4474c9ca1bdec3)
   set(CAMP_CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
@@ -269,12 +276,15 @@ if (ENABLE_CAMP)
   ExternalProject_Add(camp
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/camp
     DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+    DOWNLOAD_NAME camp.zip
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/camp-src
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/camp-bld
     URL ${CAMP_DOWNLOAD_URL}
     URL_MD5 ${CAMP_MD5}
     DEPENDS json_fortran_proj
     UPDATE_COMMAND ""
+    # NOTE: vvv PartMC-friendly version of CAMP needs this patch vvv
+    PATCH_COMMAND cmake -E copy ${CMAKE_CURRENT_SOURCE_DIR}/camp_common.h ${CMAKE_CURRENT_BINARY_DIR}/camp-src/src/camp_common.h
     CONFIGURE_COMMAND cmake -E env ${CAMP_ENV_VARS} cmake -S ${CMAKE_CURRENT_BINARY_DIR}/camp-src -B ${CMAKE_CURRENT_BINARY_DIR}/camp-bld ${CAMP_CMAKE_ARGS}
     LOG_CONFIGURE TRUE
     BUILD_COMMAND make
