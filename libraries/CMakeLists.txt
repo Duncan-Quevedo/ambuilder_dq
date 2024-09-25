@@ -22,7 +22,7 @@ set(ZLIB_CMAKE_ARGS
 )
 ExternalProject_Add(zlib_proj
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/zlib
-  DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+  DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/downloads
   DOWNLOAD_NAME zlib.zip
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/zlib-src
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/zlib-bld
@@ -68,7 +68,7 @@ set(HDF5_CMAKE_ARGS
 )
 ExternalProject_Add(hdf5_proj
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/hdf5
-  DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+  DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/downloads
   DOWNLOAD_NAME hdf5.zip
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/hdf5-src
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/hdf5-bld
@@ -118,7 +118,7 @@ set(NETCDF_CMAKE_ARGS
 )
 ExternalProject_Add(netcdf_proj
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/netcdf-c
-  DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+  DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/downloads
   DOWNLOAD_NAME netcdf-c.zip
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-c-src
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-c-bld
@@ -159,7 +159,7 @@ set(NETCDFF_CMAKE_ARGS
 #set(ENV{LDFLAGS} "-L${CMAKE_BINARY_DIR}/lib -lnetcdf")
 ExternalProject_Add(netcdff_proj
   PREFIX ${CMAKE_CURRENT_BINARY_DIR}/netcdf-fortran
-  DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+  DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/downloads
   DOWNLOAD_NAME netcdf-fortran.zip
   SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-fortran-src
   BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/netcdf-fortran-bld
@@ -200,7 +200,7 @@ if (ENABLE_CAMP)
   )
   ExternalProject_Add(json_fortran_proj
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/json-fortran
-    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+    DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/downloads
     DOWNLOAD_NAME json-fortran.zip
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/json-fortran-src
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/json-fortran-bld
@@ -234,7 +234,7 @@ if (ENABLE_CAMP)
   )
   ExternalProject_Add(suitesparse_proj
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/SuiteSparse
-    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+    DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/downloads
     DOWNLOAD_NAME SuiteSparse.zip
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/SuiteSparse-src
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/SuiteSparse-bld
@@ -275,7 +275,7 @@ if (ENABLE_CAMP)
   )
   ExternalProject_Add(camp
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/camp
-    DOWNLOAD_DIR ${CMAKE_CURRENT_SOURCE_DIR}/downloads
+    DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/downloads
     DOWNLOAD_NAME camp.zip
     SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/camp-src
     BINARY_DIR ${CMAKE_CURRENT_BINARY_DIR}/camp-bld

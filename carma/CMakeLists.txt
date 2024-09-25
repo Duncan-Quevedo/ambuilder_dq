@@ -4,8 +4,8 @@
 set(CARMA_SOURCE_URL https://github.com/AMBRS-project/CARMA_base/archive/refs/heads/main.zip)
 set(CARMA_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/CARMA_base-main)
 if (NOT EXISTS ${CARMA_SOURCE_DIR})
-  file(DOWNLOAD ${CARMA_SOURCE_URL} ${CMAKE_CURRENT_BINARY_DIR}/CARMA_base-main.zip)
-  file(ARCHIVE_EXTRACT INPUT ${CMAKE_CURRENT_BINARY_DIR}/CARMA_base-main.zip)
+  file(DOWNLOAD ${CARMA_SOURCE_URL} ${CMAKE_SOURCE_DIR}/downloads/CARMA.zip)
+  file(ARCHIVE_EXTRACT INPUT ${CMAKE_SOURCE_DIR}/downloads/CARMA.zip)
 endif()
 
 # build the box model
