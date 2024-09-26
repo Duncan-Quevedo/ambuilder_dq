@@ -18,7 +18,8 @@ from scipy.integrate import odeint
 # Input
 ################
 
-import input
+# fetch input variables from our input module
+from input import *
 
 ################
 # Code
