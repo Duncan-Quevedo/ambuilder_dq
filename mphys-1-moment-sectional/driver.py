@@ -7,6 +7,10 @@
 # 3. In its final form, it has the contents of get_coag_kernel.py and
 #    dNdt_all.py appended to it so the script is self-contained.
 
+# make sure we can find the input module in our current directory
+import sys
+sys.path.append('.')
+
 from pylab import *
 from scipy.integrate import odeint
 
