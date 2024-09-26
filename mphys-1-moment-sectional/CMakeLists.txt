@@ -44,6 +44,6 @@ file(CHMOD ${driver} PERMISSIONS
 )
 
 install(
-  FILES ${CMAKE_CURRENT_BINARY_DIR}/mphys-driver
+  PROGRAMS ${CMAKE_CURRENT_BINARY_DIR}/mphys-driver
   DESTINATION ${CMAKE_INSTALL_PREFIX}/bin
 )
