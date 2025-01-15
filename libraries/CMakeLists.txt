@@ -9,6 +9,12 @@ foreach(dir include;lib;bin;share)
   endif()
 endforeach()
 
+# The NetCDF libraries use installation paths that adhere to GNU Coding Standards.
+# In the logic for these libraries below, you'll see CMAKE_INSTALL_LIBPATH,
+# which expands to either `lib` or `lib64`, because why make anything simple???
+# https://cmake.org/cmake/help/latest/module/GNUInstallDirs.html
+include(GNUInstallDirs)
+
 # zlib -- file compression
 add_library(z STATIC IMPORTED GLOBAL)
 set_target_properties(z PROPERTIES IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/lib/libz.a)
@@ -88,7 +94,7 @@ add_dependencies(hdf5 hdf5_proj)
 
 # NetCDF C library
 add_library(netcdf STATIC IMPORTED GLOBAL)
-set(NETCDF_C_LIBRARY ${CMAKE_BINARY_DIR}/lib/libnetcdf.a)
+set(NETCDF_C_LIBRARY ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/libnetcdf.a)
 set_target_properties(netcdf PROPERTIES IMPORTED_LOCATION ${NETCDF_C_LIBRARY})
 set(NETCDF_VERSION 4.9.2)
 set(NETCDF_DOWNLOAD_URL https://github.com/Unidata/netcdf-c/archive/refs/tags/v${NETCDF_VERSION}.zip)
@@ -137,7 +143,7 @@ add_dependencies(netcdf netcdf_proj)
 
 # NetCDF Fortran library
 add_library(netcdff STATIC IMPORTED GLOBAL)
-set_target_properties(netcdff PROPERTIES IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/lib/libnetcdff.a)
+set_target_properties(netcdff PROPERTIES IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/libnetcdff.a)
 set(NETCDFF_VERSION 4.6.1)
 set(NETCDFF_DOWNLOAD_URL https://github.com/Unidata/netcdf-fortran/archive/refs/tags/v${NETCDFF_VERSION}.zip)
 set(NETCDFF_MD5 779dd836a4f5461a529ad6d5521a2422)
