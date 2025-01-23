@@ -267,9 +267,8 @@ if (ENABLE_CAMP)
   )
 
   # CAMP itself
-  # NOTE: vvv we must use a specific version of CAMP with PartMC vvv 
-  set(CAMP_DOWNLOAD_URL https://github.com/open-atmos/camp/archive/refs/tags/v1.0.0-gamma.tar.gz)
-  set(CAMP_MD5 a7cae833a50027182d4474c9ca1bdec3)
+  set(CAMP_DOWNLOAD_URL https://github.com/AMBRS-project/camp/archive/refs/heads/main.zip)
+  set(CAMP MD5 efe23ca47a4dd1a8af170edf1473f1e0)
   set(CAMP_CMAKE_ARGS
     -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}
     -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
