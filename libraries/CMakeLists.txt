@@ -323,6 +323,21 @@ if (ENABLE_CAMP)
     DEPENDEES patch     # CAMP must be downloaded before this step
     DEPENDERS configure # CAMP must be configured after this step
   )
+  if (NOT ${CMAKE_INSTALL_LIBDIR} STREQUAL "lib")
+    # copy CVODE/Sundials libraries into the right place for CAMP to see them
+    ExternalProject_Add_Step(camp copy-cvode-libraries
+      COMMENT "Copying CAMP-specific CVODE libraries into ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}..."
+      COMMAND cmake -E copy lib/libsundials_nvecserial.so.3
+	                          lib/libsundials_cvode.so.3
+                            lib/libsundials_sunlinsolklu.so.1
+	                          lib/libsundials_sunmatrixsparse.so.1
+                            ${CMAKE_INSTALL_LIBDIR}
+      LOG TRUE
+      WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
+      DEPENDEES patch     # CAMP must be downloaded before this step
+      DEPENDERS configure # CAMP must be configured after this step
+    )
+  endif()
   ExternalProject_Add_Step(camp relocate-camp-headers
     COMMENT "Copying CAMP headers to where PartMC can find them..."
     COMMAND cmake -E copy_directory ${CMAKE_BINARY_DIR}/include/camp ${CMAKE_BINARY_DIR}/include
