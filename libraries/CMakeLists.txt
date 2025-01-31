@@ -279,7 +279,11 @@ if (ENABLE_CAMP)
     JSON_FORTRAN_HOME=${CMAKE_BINARY_DIR}
     SUNDIALS_HOME=${CMAKE_BINARY_DIR}
   )
-  ExternalProject_Add(camp
+  # next couple lines added by D. Quevedo: Jan 29 2025
+  add_library(camp SHARED IMPORTED GLOBAL)
+  set_target_properties(camp PROPERTIES
+        IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/libcamp.so)
+  ExternalProject_Add(camp_proj
     PREFIX ${CMAKE_CURRENT_BINARY_DIR}/camp
     DOWNLOAD_DIR ${CMAKE_SOURCE_DIR}/downloads
     DOWNLOAD_NAME camp.zip
@@ -312,7 +316,7 @@ if (ENABLE_CAMP)
     -DKLU_LIBRARY_DIR=${CMAKE_BINARY_DIR}/lib
     -DKLU_INCLUDE_DIR=${CMAKE_BINARY_DIR}/include
   )
-  ExternalProject_Add_Step(camp build-cvode
+  ExternalProject_Add_Step(camp_proj build-cvode
     COMMENT "Building CAMP-specific CVODE..."
     COMMAND cmake -E tar xfz ${CAMP_CVODE_TARBALL}
     COMMAND cmake -S ${CAMP_CVODE_SOURCE_DIR} -B ${CAMP_CVODE_BUILD_DIR} ${CAMP_CVODE_CMAKE_ARGS}
@@ -338,7 +342,7 @@ if (ENABLE_CAMP)
       DEPENDERS configure # CAMP must be configured after this step
     )
   endif()
-  ExternalProject_Add_Step(camp relocate-camp-headers
+  ExternalProject_Add_Step(camp_proj relocate-camp-headers
     COMMENT "Copying CAMP headers to where PartMC can find them..."
     COMMAND cmake -E copy_directory ${CMAKE_BINARY_DIR}/include/camp ${CMAKE_BINARY_DIR}/include
     LOG TRUE
