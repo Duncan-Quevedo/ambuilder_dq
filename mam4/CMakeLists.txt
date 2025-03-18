@@ -67,7 +67,8 @@ add_executable(mam4
 if(ENABLE_CAMP)
     target_link_libraries(mam4 camp netcdff netcdf hdf5_hl hdf5 dl z)
     set_target_properties(mam4 PROPERTIES
-        BUILD_RPATH "${CMAKE_BINARY_DIR}/lib;${CMAKE_BINARY_DIR}/lib64")
+        BUILD_RPATH "${CMAKE_BINARY_DIR}/lib;${CMAKE_BINARY_DIR}/lib64"
+        INSTALL_RPATH "${CMAKE_BINARY_DIR}/lib;${CMAKE_BINARY_DIR}/lib64")
 else()
     target_link_libraries(mam4 netcdff netcdf hdf5_hl hdf5 dl z)
 endif()
