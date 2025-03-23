@@ -2,8 +2,8 @@
 # since it doesn't have a reasonable build system.
 
 # download and extract the source for MAM4
-set(MAM4_SOURCE_URL https://github.com/Duncan-Quevedo/MAM_box_model_dq/archive/refs/heads/main.zip)
-set(MAM4_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/MAM_box_model_dq-main)
+set(MAM4_SOURCE_URL https://github.com/Duncan-Quevedo/MAM_box_model_dq/archive/refs/heads/dev.zip)
+set(MAM4_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/MAM_box_model_dq-dev)
 if (NOT EXISTS ${MAM4_SOURCE_DIR})
   file(DOWNLOAD ${MAM4_SOURCE_URL} ${CMAKE_SOURCE_DIR}/downloads/mam4.zip)
   file(ARCHIVE_EXTRACT INPUT ${CMAKE_SOURCE_DIR}/downloads/mam4.zip)
@@ -70,8 +70,8 @@ add_executable(mam4
 if(ENABLE_CAMP)
     target_link_libraries(mam4 camp netcdff netcdf hdf5_hl hdf5 dl z)
     set_target_properties(mam4 PROPERTIES
-        BUILD_RPATH "${CMAKE_BINARY_DIR}/lib;${CMAKE_BINARY_DIR}/lib64"
-        INSTALL_RPATH "${CMAKE_BINARY_DIR}/lib;${CMAKE_BINARY_DIR}/lib64")
+        BUILD_RPATH "${CMAKE_BINARY_DIR}/lib"
+        INSTALL_RPATH "${CMAKE_BINARY_DIR}/lib")
 else()
     target_link_libraries(mam4 netcdff netcdf hdf5_hl hdf5 dl z)
 endif()

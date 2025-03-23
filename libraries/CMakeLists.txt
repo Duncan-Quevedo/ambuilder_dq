@@ -223,6 +223,7 @@ if (ENABLE_CAMP)
     LOG_OUTPUT_ON_FAILURE TRUE
   )
 # copy json-fortran libraries into the right place for MAM4 to see them - D. Quevedo: Jan 29 2025
+if (NOT ${CMAKE_INSTALL_LIBDIR} STREQUAL "lib")
   ExternalProject_Add_Step(json_fortran_proj copy-json-fortran-libraries
       COMMENT "Copying json-fortran libraries into ${CMAKE_BINARY_DIR}/lib..."
       COMMAND cmake -E copy lib64/libjsonfortran.a lib
@@ -230,6 +231,7 @@ if (ENABLE_CAMP)
       WORKING_DIRECTORY ${CMAKE_BINARY_DIR}
       DEPENDEES install
   )
+endif()
 
   # SuiteSparse for solving sparse linear systems
   # NOTE: we must build shared libraries for SuiteSparse because of
@@ -288,7 +290,7 @@ if (ENABLE_CAMP)
     SUNDIALS_HOME=${CMAKE_BINARY_DIR}
   )
   # next couple lines added by D. Quevedo: Jan 29 2025
-  add_library(camp SHARED IMPORTED GLOBAL)
+  add_library(camp SHARED IMPORTED)
   set_target_properties(camp PROPERTIES
         IMPORTED_LOCATION ${CMAKE_BINARY_DIR}/${CMAKE_INSTALL_LIBDIR}/libcamp.so)
   ExternalProject_Add(camp_proj # changed camp to camp_proj - D. Quevedo Jan 29 2025
