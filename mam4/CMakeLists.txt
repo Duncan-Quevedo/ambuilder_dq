@@ -2,8 +2,8 @@
 # since it doesn't have a reasonable build system.
 
 # download and extract the source for MAM4
-set(MAM4_SOURCE_URL https://github.com/Duncan-Quevedo/MAM_box_model_dq/archive/refs/heads/dev.zip)
-set(MAM4_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/MAM_box_model_dq-dev)
+set(MAM4_SOURCE_URL https://github.com/Duncan-Quevedo/MAM_box_model_dq/archive/refs/heads/dev_mac.zip)
+set(MAM4_SOURCE_DIR ${CMAKE_CURRENT_BINARY_DIR}/MAM_box_model_dq-dev_mac)
 if (NOT EXISTS ${MAM4_SOURCE_DIR})
   file(DOWNLOAD ${MAM4_SOURCE_URL} ${CMAKE_SOURCE_DIR}/downloads/mam4.zip)
   file(ARCHIVE_EXTRACT INPUT ${CMAKE_SOURCE_DIR}/downloads/mam4.zip)
