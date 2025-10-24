@@ -1,0 +1,75 @@
+name: pr-test
+
+# This action is triggered:
+# 1. when someone creates a pull request for a merge to the main branch
+# 2. when changes are merged into the main branch (via a pull request)
+
+on:
+  push:
+    branches: [ main ]
+  pull_request:
+    branches: [ main ]
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+
+    # build matrix (all desired configurations)
+    strategy:
+      matrix:
+        os: [ubuntu-24.04, macos-15]
+        toolchain:
+          - {compiler: gcc, version: 'latest'}
+        build-type: [Debug, Release]
+        #camp: [OFF, ON]
+
+    # Steps for building and running tests.
+    steps:
+    - name: Configuring Fortran compiler
+      uses: fortran-lang/setup-fortran@v1
+      id: setup-fortran
+      with:
+        compiler: ${{ matrix.toolchain.compiler }}
+        version: ${{ matrix.toolchain.version }}
+
+    - name: Checking out repository
+      uses: actions/checkout@v4
+      with:
+        token: ${{ secrets.GITHUB_TOKEN }}
+
+    - name: Installing Linux dependencies
+      if: ${{ (contains(matrix.os, 'ubuntu')) }}
+      run: |
+        sudo apt-get update && sudo apt-get install -y --no-install-recommends \
+          cmake \
+          gcc \
+          g++ \
+          gfortran \
+          git \
+          make \
+          ninja-build \
+          pkg-config
+
+    - name: Installing Mac dependencies
+      if: ${{ (contains(matrix.os, 'macos')) }}
+      run: |
+        brew install \
+          cmake \
+          gfortran \
+          git \
+          make \
+          ninja
+
+    - name: Configuring aerosol models (${{ matrix.build-type }})
+      run: |
+        cmake -S . -B build -G Ninja \
+        -DCMAKE_BUILD_TYPE=${{ matrix.build-type }} \
+        -DCMAKE_C_COMPILER=gcc \
+        -DCMAKE_Fortran_COMPILER=gfortran \
+        -DENABLE_CAMP=OFF # ${{ matrix.camp}} disabled for now
+
+    - name: Building aerosol models (${{ matrix.build-type }})
+      run: |
+        cd build
+        ninja
+        ninja install
